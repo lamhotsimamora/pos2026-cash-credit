@@ -78,6 +78,7 @@ class ProductController extends Controller
         $product = \App\Models\Products::find($request->id);
         if ($product) {
             $product->delete();
+            BarcodeProducts::where('id_product', $request->id)->delete();
             return $this->responseSuccess('Products deleted successfully', null);
         } else {
             return $this->responseError('Products not found', null);

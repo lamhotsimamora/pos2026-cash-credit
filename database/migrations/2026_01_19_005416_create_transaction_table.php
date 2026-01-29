@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice');
             $table->bigInteger('id_customer');
-            $table->decimal('total_price');
+            $table->float('total_price');
             $table->decimal('ppn');
             $table->string('payment_method');
             $table->timestamps();

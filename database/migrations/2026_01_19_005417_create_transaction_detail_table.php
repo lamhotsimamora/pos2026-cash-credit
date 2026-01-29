@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('id_product');
             $table->bigInteger('qty_out');
-            $table->decimal('price_sell_out');
+            $table->float('price_sell_out');
             $table->bigInteger('id_transaction');
-             $table->timestamps();
+            $table->timestamps();
         });
     }
 

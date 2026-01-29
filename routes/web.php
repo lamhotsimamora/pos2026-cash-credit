@@ -38,6 +38,7 @@ Route::get('/report/invoice/sale/month', function () {
     $profile = Profile::where('id', 1)->get();
     $transaction = view_transaction::whereMonth('created_at', date('m'))
         ->whereYear('created_at', date('Y'))
+         ->orderBy('id','desc')
         ->get();
 
     $total_transaction = $transaction->sum('total_price');
@@ -61,6 +62,7 @@ Route::get('/report/invoice/sale/week', function () {
         Carbon::now()->startOfWeek(), 
         Carbon::now()->endOfWeek()
     ])
+     ->orderBy('id','desc')
     ->get();
 
     $total_transaction = $transaction->sum('total_price');
@@ -76,3 +78,41 @@ Route::get('/report/invoice/sale/week', function () {
     return view('laporan', $data);
 });
 
+Route::get('/report/invoice/sale/daily', function () {
+    $profile = Profile::where('id', 1)->get();
+   $transaction = view_transaction::whereDate('created_at', date('Y-m-d'))
+     ->orderBy('id','desc')
+    ->get();
+
+    $total_transaction = $transaction->sum('total_price');
+
+    $data = array(
+        'profile' => $profile[0],
+        'transaction' => $transaction,
+        'date' => date('d-M-Y'),
+        'now' => date('d-M-Y'),
+        'total' => $total_transaction,
+        'description'=> 'Daily Sales Report'
+    );
+    return view('laporan', $data);
+});
+
+
+Route::get('/report/invoice/sale/daily/detail', function () {
+    $profile = Profile::where('id', 1)->get();
+   $transaction = view_transaction_detail::whereDate('created_at', date('Y-m-d'))
+     ->orderBy('id','desc')
+     ->get();
+
+    $total_transaction = $transaction->sum('total_price');
+
+    $data = array(
+        'profile' => $profile[0],
+        'transaction' => $transaction,
+        'date' => date('d-M-Y'),
+        'now' => date('d-M-Y'),
+        'total' => $total_transaction,
+        'description'=> 'Daily Sales Report'
+    );
+    return view('laporan-detail', $data);
+});

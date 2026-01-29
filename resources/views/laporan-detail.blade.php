@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Report Sales</title>
+<title>Report Sales Detail</title>
 
 <style>
 body {
@@ -70,7 +70,7 @@ table th {
 <div class="container">
 
     <div class="header">
-        <h2>REPORT SALES</h2>
+        <h2>REPORT SALES Detail</h2>
         <div>{{$profile['name']}}</div>
         <div>{{$date}}</div>
         <div>{{$description}}</div>
@@ -84,31 +84,42 @@ table th {
     <thead>
         <tr>
             <th style="width:40px;">No</th>
-            <th style="width:90px;">Date</th>
             <th>Invoice</th>
-            <th>Customer</th>
+            <th style="width:90px;">Products</th>
+            <th>Qty Out</th>
+            <th>Price Sell</th>
             <th>Payment Method</th>
+            <th>Date</th>
             <th class="text-right" style="width:120px;">Sub Total</th>
         </tr>
     </thead>
 
     <tbody>
+        @php
+            $total = 0;
+        @endphp
         @forelse($transaction as $index => $row)
+             @php
+                $subTotal = $row->price_sell * $row->qty_out;
+                $total += $subTotal;
+            @endphp
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
+                <td>{{$row->invoice}}</td>
                 <td class="text-center">
-                    {{ date('d/m/Y', strtotime($row->created_at)) }}
+                    {{ $row->name }}
                 </td>
-                <td>{{ $row->invoice }}</td>
-                <td>{{ $row->customer_name }}</td>
+                <td class="text-center">{{ $row->qty_out }}</td>
+                <td>{{ number_format($row->price_sell, 0, ',', '.') }}</td>
                 <td class="text-center">{{ $row->payment_method }}</td>
+                <td>{{$row->created_at_detail}}</td>
                 <td class="text-right">
-                    Rp {{ number_format($row->total_price, 0, ',', '.') }}
+                    Rp {{ number_format($row->price_sell * $row->qty_out, 0, ',', '.') }}
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="6" class="text-center">
+                <td colspan="7" class="text-center">
                     <em>Data tidak tersedia</em>
                 </td>
             </tr>
@@ -117,7 +128,7 @@ table th {
 
     <tfoot>
         <tr>
-            <th colspan="5" class="text-center">TOTAL</th>
+            <th colspan="7" class="text-center">TOTAL</th>
             <th class="text-right">
                 Rp {{ number_format($total, 0, ',', '.') }}
             </th>

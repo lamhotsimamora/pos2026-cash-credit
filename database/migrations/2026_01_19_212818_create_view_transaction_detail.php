@@ -13,7 +13,7 @@ return new class extends Migration
     {
          DB::statement(<<<SQL
             CREATE VIEW view_transaction_detail AS
-            select view_product.*,transaction_detail.qty_out,transaction_detail.created_at as "created_at_detail",transaction_detail.id_transaction,transaction.payment_method 
+            select view_product.*,transaction_detail.qty_out,transaction_detail.created_at as "created_at_detail",transaction_detail.id_transaction,transaction.payment_method,transaction.invoice 
             from view_product
             join transaction_detail
             join transaction

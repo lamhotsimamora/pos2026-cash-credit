@@ -100,7 +100,7 @@ Route::get('/report/invoice/sale/daily', function () {
 
 Route::get('/report/invoice/sale/daily/detail', function () {
     $profile = Profile::where('id', 1)->get();
-   $transaction = view_transaction_detail::whereDate('created_at', date('Y-m-d'))
+   $transaction = view_transaction_detail::whereDate('created_at_detail', date('Y-m-d'))
      ->orderBy('id','desc')
      ->get();
 
@@ -108,7 +108,7 @@ Route::get('/report/invoice/sale/daily/detail', function () {
 
     $data = array(
         'profile' => $profile[0],
-        'transaction' => $transaction,
+        'transaction_detail' => $transaction,
         'date' => date('d-M-Y'),
         'now' => date('d-M-Y'),
         'total' => $total_transaction,

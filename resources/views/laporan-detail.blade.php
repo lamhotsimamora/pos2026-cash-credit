@@ -98,7 +98,7 @@ table th {
         @php
             $total = 0;
         @endphp
-        @forelse($transaction as $index => $row)
+        @forelse($transaction_detail as $index => $row)
              @php
                 $subTotal = $row->price_sell * $row->qty_out;
                 $total += $subTotal;

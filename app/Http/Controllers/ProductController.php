@@ -100,13 +100,31 @@ class ProductController extends Controller
 
     public function edit(Request $request)
     {
-        $product = Products::find($request->input('id_product_edit'));
+
+        $id_edit = $request->input('id_product_edit');
+
+        $product = Products::find($id_edit);
 
         $product->stock = $request->input('stock_edit');
         $product->price_sell = $request->input('price_sell_edit');
         $product->price_buy = $request->input('price_buy_edit');
+        $product->name = $request->input('name_edit');
 
         $product->save();
+
+        foreach ($request->input('barcodes_edit') as $barcode) {
+
+            $data = BarcodeProducts::where('barcode', $barcode)
+                    ->where('id_product', $id_edit)
+                    ->get();
+
+            if (count($data) == 0) {
+                BarcodeProducts::create([
+                    'id_product' => $id_edit,
+                    'barcode' => $barcode
+                ]);
+            }
+        }
         return $this->responseSuccess('Edit products retrieved successfully', null);
     }
 
@@ -123,5 +141,16 @@ class ProductController extends Controller
             ->get();
 
         return $this->responseSuccess('Top products retrieved successfully', $top);
+    }
+
+    public function loadBarcode(Request $request)
+    {
+        $barcodes = BarcodeProducts::where('id_product', $request->id_product)
+            ->pluck('barcode')->toArray();// 🔥 PENTING
+
+        return $this->responseSuccess(
+            'Barcodes loaded successfully',
+            $barcodes
+        );
     }
 }

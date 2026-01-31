@@ -32,6 +32,8 @@ Route::post('/product/search', [ProductController::class, 'search'])->middleware
 Route::post('/product/top', [ProductController::class, 'top'])->middleware(TokenAuth::class);
 Route::post('/product/all/profit', [ProductController::class, 'allProfit'])->middleware(TokenAuth::class);
 
+Route::post('/product/load/barcode', [ProductController::class, 'loadBarcode'])->middleware(TokenAuth::class);
+
 Route::post('/satuan/save', [SatuanController::class, 'save'])->middleware(TokenAuth::class);
 Route::post('/satuan/load', [SatuanController::class, 'load'])->middleware(TokenAuth::class);
 Route::post('/satuan/delete', [SatuanController::class, 'delete'])->middleware(TokenAuth::class);

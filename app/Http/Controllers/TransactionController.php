@@ -45,62 +45,108 @@ class TransactionController extends Controller
     $year  = $request->year ?? date('Y');
     $month = date('m');
 
-    /**
-     * =========================
-     * 1️⃣ DATA CASH
-     * =========================
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | 1️⃣ MONTHLY DATA (PER BULAN)
+    |--------------------------------------------------------------------------
+    */
+
+    // CASH
     $cashRaw = Transaction::where('payment_method', 'cash')
         ->whereYear('created_at', $year)
         ->selectRaw('MONTH(created_at) as month, SUM(total_price) as total')
         ->groupBy(DB::raw('MONTH(created_at)'))
         ->pluck('total', 'month');
 
-    /**
-     * =========================
-     * 2️⃣ DATA CREDIT
-     * =========================
-     */
+    // CREDIT
     $creditRaw = Transaction::where('payment_method', 'credit')
         ->whereYear('created_at', $year)
         ->selectRaw('MONTH(created_at) as month, SUM(total_price) as total')
         ->groupBy(DB::raw('MONTH(created_at)'))
         ->pluck('total', 'month');
 
-    /**
-     * =========================
-     * 3️⃣ BUILD LABEL & DATASET
-     * =========================
-     */
-    $labels      = [];
-    $cashData    = [];
-    $creditData  = [];
+    $monthlyLabels     = [];
+    $monthlyCashData   = [];
+    $monthlyCreditData = [];
 
     for ($m = 1; $m <= 12; $m++) {
-        $labels[]     = Carbon::create()->month($m)->translatedFormat('M');
-        $cashData[]   = (int) ($cashRaw[$m] ?? 0);
-        $creditData[] = (int) ($creditRaw[$m] ?? 0);
+        $monthlyLabels[]     = Carbon::create()->month($m)->translatedFormat('M');
+        $monthlyCashData[]   = (int) ($cashRaw[$m] ?? 0);
+        $monthlyCreditData[] = (int) ($creditRaw[$m] ?? 0);
     }
 
-    /**
-     * =========================
-     * RESPONSE
-     * =========================
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | 2️⃣ DAILY DATA (7 HARI TERAKHIR)
+    |--------------------------------------------------------------------------
+    */
+
+    $startDate = Carbon::now()->subDays(6)->startOfDay();
+    $endDate   = Carbon::now()->endOfDay();
+
+    $dailyRaw = Transaction::selectRaw("
+            DATE(created_at) as date,
+            SUM(CASE WHEN payment_method = 'cash' THEN total_price ELSE 0 END) as cash,
+            SUM(CASE WHEN payment_method = 'credit' THEN total_price ELSE 0 END) as credit
+        ")
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get()
+        ->keyBy('date');
+
+    $dailyLabels     = [];
+    $dailyCashData   = [];
+    $dailyCreditData = [];
+
+    for ($i = 6; $i >= 0; $i--) {
+        $date  = Carbon::now()->subDays($i)->format('Y-m-d');
+        $label = Carbon::now()->subDays($i)->translatedFormat('D');
+
+        $dailyLabels[]     = $label;
+        $dailyCashData[]   = isset($dailyRaw[$date]) ? (int) $dailyRaw[$date]->cash : 0;
+        $dailyCreditData[] = isset($dailyRaw[$date]) ? (int) $dailyRaw[$date]->credit : 0;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 3️⃣ RESPONSE (FINAL – AMAN FRONTEND)
+    |--------------------------------------------------------------------------
+    */
+
     return $this->responseSuccess(
         'Transaction graphic loaded successfully',
         [
             'year'  => $year,
-            'month'=> $month,
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => 'Cash',
-                    'data'  => $cashData
-                ],
-                [
-                    'label' => 'Credit',
-                    'data'  => $creditData
+            'month' => $month,
+
+            // MONTHLY
+            'monthly' => [
+                'labels' => $monthlyLabels,
+                'datasets' => [
+                    [
+                        'label' => 'Cash',
+                        'data'  => $monthlyCashData
+                    ],
+                    [
+                        'label' => 'Credit',
+                        'data'  => $monthlyCreditData
+                    ]
+                ]
+            ],
+
+            // DAILY
+            'daily' => [
+                'labels' => $dailyLabels,
+                'datasets' => [
+                    [
+                        'label' => 'Cash',
+                        'data'  => $dailyCashData
+                    ],
+                    [
+                        'label' => 'Credit',
+                        'data'  => $dailyCreditData
+                    ]
                 ]
             ]
         ]

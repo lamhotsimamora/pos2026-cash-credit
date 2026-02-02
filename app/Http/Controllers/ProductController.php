@@ -34,6 +34,7 @@ class ProductController extends Controller
                 'profit' => $request->price_sell - $request->price_buy,
             ]);
 
+            
             foreach ($request->barcodes as $barcode) {
                 BarcodeProducts::create([
                     'id_product' => $product->id,
@@ -87,8 +88,13 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-       $product = View_Barcode::where('barcode', $request->input('query'))->
-                                orWhere('name', $request->input('query'))->get();
+       $query = $request->input('search');
+
+        $product = View_Barcode::where(function ($q) use ($query) {
+            $q->where('barcode', 'like', "%{$query}%")
+            ->orWhere('name', 'like', "%{$query}%");
+        })->get();
+
         return $this->responseSuccess('Products search successfully', $product);
     }
 

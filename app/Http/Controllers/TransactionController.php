@@ -181,7 +181,7 @@ class TransactionController extends Controller
                 ->decrement('stock', $qty_out);
         }
 
-        return $this->responseSuccess('Transaction saved successfully', null);
+        return $this->responseSuccess('Transaction saved successfully', $data);
     }
 
     public function total(Request $request)

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('barcode_products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_product');
-            $table->string('barcode')->unique();
+            $table->string('barcode');
             $table->timestamps();
         });
     }

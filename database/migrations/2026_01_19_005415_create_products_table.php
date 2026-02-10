@@ -16,10 +16,10 @@ return new class extends Migration
            // $table->string('code')->unique();
             $table->text('name');
             $table->bigInteger('id_satuan');
-            $table->decimal('price_buy');
-            $table->decimal('price_sell');
-            $table->bigInteger('stock');
-            $table->decimal('profit');
+            $table->float('price_buy');
+            $table->float('price_sell');
+            $table->float('stock');
+            $table->float('profit');
             $table->timestamps();
         });
     }

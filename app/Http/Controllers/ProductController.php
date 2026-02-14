@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function load(Request $request)
     {
-        $products = \App\Models\Products::orderBy('id', 'desc')->get();
+        $products = \App\Models\Products::orderBy('id', 'desc')->limit(100)->get();
         return $this->responseSuccess('Products loaded successfully', $products);
     }
 

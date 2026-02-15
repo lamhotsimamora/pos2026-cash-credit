@@ -14,6 +14,7 @@ class Transaction extends Model
         'total_price',
         'ppn',
         'payment_method',
-        'id_customer'
+        'id_customer',
+        'additional_price'
     ];
 }

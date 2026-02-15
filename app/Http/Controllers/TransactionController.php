@@ -31,7 +31,7 @@ class TransactionController extends Controller
 
         $transaction = $query
             ->orderBy('created_at', 'desc')
-            ->limit(200)
+            ->limit(100)
             ->get();
 
         return $this->responseSuccess(
@@ -164,7 +164,8 @@ class TransactionController extends Controller
             'ppn' => $ppn,
             'total_price' => ($total_price * $ppn / 100) + $total_price,
             'payment_method' => $request->input('payment_type'),
-            'id_customer' => $request->input('customer_id')
+            'id_customer' => $request->input('customer_id'),
+            'additional_price' => $request->input('additional_price')
         ]);
 
         for ($i = 0; $i < count($request->input('data')); $i++) {

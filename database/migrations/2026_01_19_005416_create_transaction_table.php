@@ -18,6 +18,7 @@ return new class extends Migration
             $table->float('total_price');
             $table->decimal('ppn');
             $table->string('payment_method');
+            $table->float('additional_price');
             $table->timestamps();
         });
     }

@@ -29,6 +29,7 @@ Route::get('/report/invoice/{id}', function ($id) {
         'total_after_ppn' => $invoice[0]->total_price,
         'customer'=> $invoice[0]->customer_name,
         'type_payment'  => $invoice[0]->payment_method,
+        'additional_price' =>$invoice[0]->additional_price
     );
 
     return view('invoice', $data);

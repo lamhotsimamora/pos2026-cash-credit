@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FreezeController;
+use App\Http\Controllers\HistoryStockController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SatuanController;
@@ -71,5 +72,7 @@ Route::post('/customer/search', [CustomerController::class, 'search'])->middlewa
 Route::post('/customer/pay/credit', [CustomerController::class, 'payCredit'])->middleware(TokenAuth::class);
 Route::post('/customer/payment/history', [CustomerController::class, 'paymentHistory'])->middleware(TokenAuth::class);
 
+Route::post('/history/stock/out/load', [HistoryStockController::class, 'load'])->middleware(TokenAuth::class);
+Route::post('/history/stock/out/search', [HistoryStockController::class, 'search'])->middleware(TokenAuth::class);
 
 Route::post('/freeze/check', [FreezeController::class, 'index'])->middleware(TokenAuth::class);

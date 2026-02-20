@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HistoryStock;
 use App\Models\Products;
 use App\Models\Settings;
 use App\Models\Transaction;
@@ -180,6 +181,12 @@ class TransactionController extends Controller
 
             Products::where('id', $id_product)
                 ->decrement('stock', $qty_out);
+            
+
+            HistoryStock::create([
+                'product_id' => $id_product,
+                'qty_out' => $qty_out
+            ]);
         }
 
         return $this->responseSuccess('Transaction saved successfully', $data);
